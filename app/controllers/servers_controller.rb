@@ -68,6 +68,21 @@ class ServersController < ApplicationController
 
   def queue
     @messages = @server.queued_messages.order(:id => :desc).page(params[:page])
+
+    countbroken = 0
+    for message in @messages
+        begin
+            test = message.message
+        rescue
+            message.destroy
+            countbroken += 1
+        end
+    end
+
+    if countbroken > 0
+        @messages = @server.queued_messages.order(:id => :desc).page(params[:page])
+    end
+
     @messages_with_message = @messages.include_message
   end
 
