@@ -58,7 +58,7 @@ GEM
     builder (3.2.3)
     bunny (2.5.1)
       amq-protocol (>= 2.0.1)
-    byebug (10.0.2)
+    byebug (11.0.1)
     changey (1.0.0)
       activerecord (>= 4.2, < 6)
     chronic (0.10.2)
