@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 gem 'rails', '= 5.2.2.1'
-gem 'mysql2', '>= 0.3.18', '< 0.5'
+gem 'mysql2', '>= 0.3.18', '< 0.6'
 gem 'puma', '~> 3.0'
 gem 'turbolinks', '~> 5'
 gem 'haml'
