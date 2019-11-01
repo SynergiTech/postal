@@ -166,7 +166,7 @@ module Postal
                       begin
                         io.write(line.to_s + "\r\n")
                         io.flush
-                      rescue Errno::ECONNRESET
+                      rescue Errno::ECONNRESET, Errno::EPIPE
                         # Client disconnected before we could write response
                         eof = true
                       end
