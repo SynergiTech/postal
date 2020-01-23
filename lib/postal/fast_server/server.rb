@@ -26,7 +26,11 @@ module Postal
 
         loop do
           client = nil
-          ios = select(server_sockets.keys, nil, nil, 1)
+          begin
+            ios = select(server_sockets.keys, nil, nil, 1)
+          rescue SignalException => e
+            # shutting down
+          end
           if ios && server_io = ios[0][0]
             begin
               client_io = server_io.accept_nonblock
