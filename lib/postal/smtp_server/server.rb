@@ -27,7 +27,11 @@ module Postal
         end
 
         trap("TERM") do
-          STDOUT.puts "Received TERM signal, shutting down."
+          begin
+            STDOUT.puts "Received TERM signal, shutting down."
+          rescue Errno::EPIPE
+            # unable to output, never mind
+          end
           unlisten
         end
 
