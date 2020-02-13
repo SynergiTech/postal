@@ -17,6 +17,14 @@ RUN apt-get install -y \
   nano \
   nodejs
 
+# postal run needs to wait for rabbitmq
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +rx /usr/local/bin/wait-for-it
+
+# postal run needs to bind to port 25 by default
+# need to do this as root, not postal
+RUN setcap 'cap_net_bind_service=+ep' /usr/local/bin/ruby
+
 # Setup an application
 RUN useradd -r -d /opt/postal -m -s /bin/bash -u 999 postal
 USER postal
@@ -27,6 +35,9 @@ WORKDIR /opt/postal/app
 RUN gem install bundler --no-doc
 RUN bundle config frozen 1
 RUN bundle config build.sassc --disable-march-tune-native
+
+# Postal run requires procodile
+RUN gem install procodile --no-doc
 
 # Install the latest and active gem dependencies and re-run
 # the appropriate commands to handle installs.

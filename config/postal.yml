@@ -3,6 +3,10 @@ web:
   # The host that the management interface will be available on
   host: <%= ENV["POSTAL_WEB_HOST"] %>
 
+# needs to be 0.0.0.0 to use docker ports
+web_server:
+  bind_address: 0.0.0.0
+
 general:
   # Always use local DNS resolver, rather than attempting to find a nameserver
   # by stepping through domain parts, which seems to give us a result of
@@ -15,7 +19,6 @@ main_db:
   host: <%= ENV["MYSQL_HOST"] %>
   username: <%= ENV["MYSQL_USER"] %>
   password: <%= ENV["MYSQL_PASSWORD"] %>
-  database: <%= ENV["MYSQL_DATABASE_MAIN"] %>
 
 message_db:
   # Specify the connection details for your MySQL server that will be house the
@@ -49,6 +52,7 @@ smtp:
   from_address: <%= ENV["POSTAL_SMTP_FROM_ADDRESS"] %> # postal@yourdomain.com
 
 rails:
+  environment: development # see exceptions in ui
   # This is generated automatically by the config initialization. It should be a random
   # string unique to your installation.
   secret_key: <%= ENV["POSTAL_RAILS_SECRET_KEY"] %>

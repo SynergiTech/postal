@@ -1,0 +1,84 @@
+version: '3'
+services:
+
+  # run this with docker-compose up to get basic errors and also find the generated root password
+  # use the root password to give postal user access to postal-%
+
+  # docker-compose exec postal bash -> need to run postal initialize and postal make-user on first go
+
+  # can generate a secret with rake secret
+
+  # swap example.com to your domain
+
+  # how to do lets_encrypt.pem and signing.key?
+
+  postal:
+    build:
+      context: ./
+    # command: bundle exec puma -C config/puma.rb
+    command: wait-for-it rabbitmq:5672 -- bin/postal run
+    depends_on:
+      - mysql
+      - rabbitmq
+    networks:
+      - "backend"
+    ports:
+      - "80:5000"
+    volumes:
+      - ./config/postal.yml:/opt/postal/config/postal.yml
+      - ./config/lets_encrypt.pem:/opt/postal/config/lets_encrypt.pem
+      - ./config/signing.key:/opt/postal/config/signing.key
+      - ./Procfile:/opt/postal/app/Procfile
+    environment:
+      - POSTAL_WEB_HOST=localhost
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=postal
+      - MYSQL_PASSWORD=postal
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=password
+      - POSTAL_DNS_MX_RECORD=mx.postal.example.com
+      - POSTAL_DNS_SMTP_SERVER_HOSTNAME=postal.example.com
+      - POSTAL_DNS_SPF_INCLUDE=spf.postal.example.com
+      - POSTAL_DNS_RETURN_PATH=rp.postal.example.com
+      - POSTAL_DNS_ROUTE_DOMAIN=routes.postal.example.com
+      - POSTAL_DNS_TRACK_DOMAIN=track.postal.example.com
+      - POSTAL_SMTP_USERNAME=something/something
+      - POSTAL_SMTP_PASSWORD=something
+      - POSTAL_SMTP_FROM_NAME=Postal
+      - POSTAL_SMTP_FROM_ADDRESS=postal@postal.example.com
+      - POSTAL_RAILS_SECRET_KEY=a98a94aef6d7148c08e7954426acf435b7a5b3f3404b690ba03e4802d7ae01ccbaf287c8bdd8edd75ed4fa6cd44aa5cf1955d6f7f559fe399de15eec49bfb456
+
+  mysql:
+    image: mysql:5.7
+    networks:
+      - "backend"
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=postal
+      - MYSQL_USER=postal
+      - MYSQL_PASSWORD=postal
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    # ports:
+    #   - "15672:15672"
+    networks:
+      - backend
+    volumes:
+      - rmqdata:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_DEFAULT_VHOST=/postal
+
+networks:
+  backend:
+
+volumes:
+  dbdata:
+  rmqdata:
