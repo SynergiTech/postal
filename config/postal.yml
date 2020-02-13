@@ -1,0 +1,54 @@
+---
+web:
+  # The host that the management interface will be available on
+  host: <%= ENV["POSTAL_WEB_HOST"] %>
+
+general:
+  # Always use local DNS resolver, rather than attempting to find a nameserver
+  # by stepping through domain parts, which seems to give us a result of
+  # `0.0.0.0`, which obviously doesn't work if you try to use it for
+  # resolution.
+  use_local_ns_for_domains: true
+
+main_db:
+  # Specify the connection details for your MySQL database
+  host: <%= ENV["MYSQL_HOST"] %>
+  username: <%= ENV["MYSQL_USER"] %>
+  password: <%= ENV["MYSQL_PASSWORD"] %>
+  database: <%= ENV["MYSQL_DATABASE_MAIN"] %>
+
+message_db:
+  # Specify the connection details for your MySQL server that will be house the
+  # message databases for mail servers.
+  host: <%= ENV["MYSQL_HOST"] %>
+  username: <%= ENV["MYSQL_USER"] %>
+  password: <%= ENV["MYSQL_PASSWORD"] %>
+
+rabbitmq:
+  # Specify the connection details for your RabbitMQ server.
+  host: <%= ENV["RABBITMQ_HOST"] %>
+  username: <%= ENV["RABBITMQ_USER"] %>
+  password: <%= ENV["RABBITMQ_PASSWORD"] %>
+
+dns:
+  # Specifies the DNS record that you have configured. Refer to the documentation at
+  # https://github.com/atech/postal/wiki/Domains-&-DNS-Configuration for further
+  # information about these.
+  mx_records:
+    - <%= ENV["POSTAL_DNS_MX_RECORD"] %> # mx.postal.example.com
+  smtp_server_hostname: <%= ENV["POSTAL_DNS_SMTP_SERVER_HOSTNAME"] %> # postal.example.com
+  spf_include: <%= ENV["POSTAL_DNS_SPF_INCLUDE"] %> # spf.postal.example.com
+  return_path: <%= ENV["POSTAL_DNS_RETURN_PATH"] %> # rp.postal.example.com
+  route_domain: <%= ENV["POSTAL_DNS_ROUTE_DOMAIN"] %> # routes.postal.example.com
+  track_domain: <%= ENV["POSTAL_DNS_TRACK_DOMAIN"] %> # track.postal.example.com
+
+smtp:
+  username: <%= ENV["POSTAL_SMTP_USERNAME"] %> # Complete when Postal is running and you can
+  password: <%= ENV["POSTAL_SMTP_PASSWORD"] %> # generate the credentials within the interface.
+  from_name: <%= ENV["POSTAL_SMTP_FROM_NAME"] %> # Postal
+  from_address: <%= ENV["POSTAL_SMTP_FROM_ADDRESS"] %> # postal@yourdomain.com
+
+rails:
+  # This is generated automatically by the config initialization. It should be a random
+  # string unique to your installation.
+  secret_key: <%= ENV["POSTAL_RAILS_SECRET_KEY"] %>

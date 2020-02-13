@@ -8,7 +8,7 @@ module Postal
     end
 
     def self.private_key
-      @private_key ||= OpenSSL::PKey::RSA.new(File.open(Postal.lets_encrypt_private_key_path))
+      @private_key ||= OpenSSL::PKey::RSA.new(Postal.erb_read(Postal.lets_encrypt_private_key_path))
     end
 
     def self.directory

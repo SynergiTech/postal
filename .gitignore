@@ -16,13 +16,16 @@
 # Ignore Byebug command history file.
 .byebug_history
 
-config/postal.yml
-config/smtp.cert
-config/smtp.key
-config/lets_encrypt.pem
-config/signing.key
-config/fast_server.cert
-config/fast_server.key
+# GoCardless: Vendor our own configuration files that hook into environment
+# variables.
+#
+# config/postal.yml
+# config/smtp.cert        # POSTAL_SMTP_CERT
+# config/smtp.key         # POSTAL_SMTP_KEY
+# config/lets_encrypt.pem # POSTAL_LETS_ENCRYPT_PEM
+# config/signing.key      # POSTAL_SIGNING_KEY
+# config/fast_server.cert # POSTAL_FAST_SERVER_CERT
+# config/fast_server.key  # POSTAL_FAST_SERVER_KEY
 
 public/assets
 vendor/bundle

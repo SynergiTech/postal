@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb'
 require 'pathname'
 require 'cgi'
 require 'openssl'
@@ -28,6 +29,9 @@ module Postal
     @config ||= begin
       require 'hashie/mash'
       config = Hashie::Mash.new(self.defaults)
+      # TODO: Deep merging here requires that *every* key in postal.yml is set,
+      # otherwise we overwrite the defaults with nulls.
+      # Filter nulls from yaml_config ?
       config.deep_merge(self.yaml_config)
     end
   end
@@ -61,15 +65,16 @@ module Postal
   end
 
   def self.yaml_config
-    @yaml_config ||= File.exist?(config_file_path) ? YAML.load_file(config_file_path) : {}
+    @yaml_config ||= File.exist?(config_file_path) ? YAML.load(erb_read(config_file_path)) : {}
   end
 
   def self.defaults_file_path
     @defaults_file_path ||= app_root.join('config', 'postal.defaults.yml')
   end
 
+  # GoCardless: Parse the postal.yml as ERB to enable env variable interpolation
   def self.defaults
-    @defaults ||= YAML.load_file(self.defaults_file_path)
+    @defaults ||= YAML.load(erb_read(self.defaults_file_path))
   end
 
   def self.database_url
@@ -122,7 +127,7 @@ module Postal
   end
 
   def self.smtp_private_key
-    @smtp_private_key ||= OpenSSL::PKey::RSA.new(File.read(smtp_private_key_path))
+    @smtp_private_key ||= OpenSSL::PKey::RSA.new(erb_read(smtp_private_key_path))
   end
 
   def self.smtp_certificate_path
@@ -130,7 +135,7 @@ module Postal
   end
 
   def self.smtp_certificate_data
-    @smtp_certificate_data ||= File.read(smtp_certificate_path)
+    @smtp_certificate_data ||= erb_read(smtp_certificate_path)
   end
 
   def self.smtp_certificates
@@ -147,7 +152,7 @@ module Postal
   end
 
   def self.fast_server_default_private_key
-    @fast_server_default_private_key ||= OpenSSL::PKey::RSA.new(File.read(fast_server_default_private_key_path))
+    @fast_server_default_private_key ||= OpenSSL::PKey::RSA.new(erb_read(fast_server_default_private_key_path))
   end
 
   def self.fast_server_default_certificate_path
@@ -155,7 +160,7 @@ module Postal
   end
 
   def self.fast_server_default_certificate_data
-    @fast_server_default_certificate_data ||= File.read(fast_server_default_certificate_path)
+    @fast_server_default_certificate_data ||= erb_read(fast_server_default_certificate_path)
   end
 
   def self.fast_server_default_certificates
@@ -176,7 +181,7 @@ module Postal
   end
 
   def self.signing_key
-    @signing_key ||= OpenSSL::PKey::RSA.new(File.read(signing_key_path))
+    @signing_key ||= OpenSSL::PKey::RSA.new(erb_read(signing_key_path))
   end
 
   def self.rp_dkim_dns_record
@@ -209,6 +214,10 @@ module Postal
 
   def self.ip_pools?
     self.config.general.use_ip_pools?
+  end
+
+  def self.erb_read(path)
+    ERB.new(File.read(path)).result
   end
 
 end
