@@ -7,6 +7,12 @@ web:
 web_server:
   bind_address: 0.0.0.0
 
+  # needs to be 0.0.0.0 to use docker ports
+fast_server:
+  enabled: false
+  bind_address:
+    - 0.0.0.0
+
 general:
   # Always use local DNS resolver, rather than attempting to find a nameserver
   # by stepping through domain parts, which seems to give us a result of

@@ -4,7 +4,7 @@ services:
   # run this with docker-compose up to get basic errors and also find the generated root password
   # use the root password to give postal user access to postal-%
 
-  # docker-compose exec postal bash -> need to run postal initialize and postal make-user on first go
+  # docker-compose exec postal bash -> need to run bin/postal initialize and bin/postal make-user on first go
 
   # can generate a secret with rake secret
 
