@@ -147,6 +147,9 @@ module Postal
                   else
                     buffers[io] << io.readpartial(10240)
                   end
+                rescue OpenSSL::SSL::SSLError => e
+                  client.log "SSL Negotiation Failed: #{e.message}"
+                  eof = true
                 rescue EOFError, Errno::ECONNRESET, Errno::ETIMEDOUT
                   # Client went away
                   eof = true
