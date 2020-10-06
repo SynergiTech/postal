@@ -139,7 +139,7 @@ module Postal
             log "Sending message #{message.server.id}::#{message.id} to #{rcpt_to}"
             smtp_result = @smtp_client.send_message(raw_message, mail_from, [rcpt_to])
           end
-        rescue Errno::ECONNRESET, Errno::EPIPE, OpenSSL::SSL::SSLError
+        rescue Errno::ECONNRESET, Errno::EPIPE, OpenSSL::SSL::SSLError, IOError
           if (tries += 1) < 2
             reconnect
             retry
