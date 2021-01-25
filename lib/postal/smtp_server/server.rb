@@ -201,6 +201,9 @@ module Postal
                   rescue OpenSSL::SSL::SSLError => e
                     client.log "SSL Negotiation Failed: #{e.message}"
                     eof = true
+                  rescue Errno::ECONNRESET
+                    # Client disconnected before we could write response
+                    eof = true
                   end
                 end
 
